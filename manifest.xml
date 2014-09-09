@@ -1,0 +1,15 @@
+<package>
+  <description brief="Sonar based structure inspection">
+  
+  </description>
+  <author>Sascha Arnold/sascha.arnold@dfki.de</author>
+  <license></license>
+  <url>http://</url>
+  <logo>http://</logo>
+  <depend package="base/cmake" />
+  <depend package="base/orogen/types" />
+  <depend package="auv_avalon/orogen/sonar_feature_estimator" />
+  <depend package="auv_avalon/sonar_detectors" />
+  <depend package="control/orogen/auv_control" />
+  <depend package="avalon/orogen/avalonControl" />
+</package>

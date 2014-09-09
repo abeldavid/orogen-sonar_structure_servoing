@@ -1,0 +1,97 @@
+name "sonar_structure_servoing"
+# version "0.1"
+
+import_types_from "sonar_structure_servoingTypes.hpp"
+import_types_from "base"
+import_types_from "auv_control"
+
+using_library "sonar_detectors"
+using_task_library "sonar_feature_estimator"
+
+
+task_context "Task" do
+    needs_configuration
+
+    #******************************
+    #*** Controller Properties ****
+    #******************************
+    property("servoing_direction", "double", 0.0).
+        doc("in this direction the wall be if the wall servoing is performed, default is 0 than the wall is in front")
+    property("servoing_distance", 'double', 1.5).
+        doc("reference distance to structure in body frame")
+    property("fixed_depth", 'double', -1.0).
+        doc("reference depth")
+    property("servoing_speed", "double", 0.0).
+        doc("sets relative distance, which will result in a certain speed")
+
+
+    #******************************
+    #**** Detector Properties *****
+    #******************************
+    property("left_opening_angle","double", 0.785).
+        doc("opening angle to the left of the supposed wall direction, always positive")
+    property("right_opening_angle","double", 0.785).
+        doc("opening angle to the right of the supposed wall direction, always positive")
+    property("angular_resolution_sonar","double", 0.019638).
+        doc("the angular resolution of the sonar")
+    property("dbscan_epsilon","double", 10.0).
+        doc("epsilon of the db scan clustering")
+    property("expected_structure_diameter","double", 3.0).
+        doc("expected diameter of the structure")
+    property("max_mahalanobis_distance","double", 1.0).
+        doc("max allowed mahalanobis distance of two consecutive structure candidates")
+    property("min_valid_cadidate_count","int", 3).
+        doc("minimum amount of valid candidates, after the inspection is started")
+
+
+    #******************************
+    #******* Input Ports **********
+    #******************************
+    input_port('sonarbeam_feature', '/base/samples/LaserScan').
+        needs_reliable_connection.
+        doc("newest sonar feature")
+    input_port('odometry_samples', '/base/samples/RigidBodyState').
+        needs_reliable_connection.
+        doc("newest sonar feature")
+
+
+    #******************************
+    #******* Output Ports *********
+    #******************************
+    output_port('position_command', '/base/AUVPositionCommand').
+        doc("relativ target position and heading")
+    output_port('aligned_position_command', 'base::LinearAngular6DCommand').
+	    doc("relativ target x- and y- position for new control draft")
+    output_port('world_command', 'base::LinearAngular6DCommand').
+	    doc("absolute depth, roll, pitch, and yaw for new control draft")
+	    
+    
+    #******************************
+    #******** Debug Ports *********
+    #******************************
+    property("enable_debug", 'bool', true)
+    output_port('debug_data', '/sonar_structure_servoing/StructureServoingDebug')
+    
+
+    #******************************
+    #***** Transformer Config *****
+    #******************************
+    transformer do
+        max_latency( 0.5 )
+
+        transformation("sonar", "body")
+        transformation("body", "odometry")
+
+        align_port("odometry_samples", 0.01)
+        align_port("sonarbeam_feature", 0.1)
+    end
+
+
+    #******************************
+    #********** States ************
+    #******************************
+    runtime_states :MISSING_TRANSFORMATION, :SEARCHING_STRUCTURE, :VALIDATING_STRUCTURE, :INSPECTING_STRUCTURE
+    
+    port_driven "sonarbeam_feature"
+end
+
