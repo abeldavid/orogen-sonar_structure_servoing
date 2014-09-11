@@ -90,7 +90,7 @@ task_context "Task" do
     #******************************
     #********** States ************
     #******************************
-    runtime_states :MISSING_TRANSFORMATION, :SEARCHING_STRUCTURE, :VALIDATING_STRUCTURE, :INSPECTING_STRUCTURE
+    runtime_states :MISSING_TRANSFORMATION, :SEARCHING_STRUCTURE, :VALIDATING_STRUCTURE, :INSPECTING_STRUCTURE, :WAITING_FOR_TARGET_DEPTH
     
     port_driven "sonarbeam_feature"
 end

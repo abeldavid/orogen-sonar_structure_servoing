@@ -63,6 +63,19 @@ void Task::odometry_samplesTransformerCallback(const base::Time& ts, const base:
         return;
     }
     
+    // waiting for target depth
+    if((odometry_samples_sample.position.z() > (_fixed_depth.value() * 0.9)) ||
+	(odometry_samples_sample.position.z() < (_fixed_depth.value() * 1.1)))
+    {
+	new_state = WAITING_FOR_TARGET_DEPTH;
+	return;
+    }
+    if(!target_depth_reached)
+    {
+	target_depth_reached = true;
+	estimator.resetCandidateCounter();
+    }
+    
     if(estimator.isStructureStable())
     {
 	new_state = INSPECTING_STRUCTURE;
@@ -103,6 +116,7 @@ bool Task::configureHook()
     estimator.setMinValidCadidates(_min_valid_cadidate_count.value());
     estimator.setProcessNoiseCovariance(0.05 * Eigen::Matrix2d::Identity());
     
+    target_depth_reached = false;
     odometry_time.microseconds = 0;
     
     last_state = PRE_OPERATIONAL;

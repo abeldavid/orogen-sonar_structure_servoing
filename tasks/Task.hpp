@@ -33,6 +33,7 @@ namespace sonar_structure_servoing {
 	Eigen::Vector3d relative_target_position;
 	base::Time odometry_time;
 	base::Orientation current_orientation;
+	bool target_depth_reached;
 
         virtual void sonarbeam_featureTransformerCallback(const base::Time &ts, const ::base::samples::LaserScan &sonarbeam_feature_sample);
 	virtual void odometry_samplesTransformerCallback(const base::Time &ts, const ::base::samples::RigidBodyState &odometry_samples_sample);
