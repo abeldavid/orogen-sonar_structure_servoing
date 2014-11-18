@@ -11,5 +11,5 @@
   <depend package="auv_avalon/orogen/sonar_feature_estimator" />
   <depend package="auv_avalon/sonar_detectors" />
   <depend package="control/orogen/auv_control" />
-  <depend package="avalon/orogen/avalonControl" />
+  <depend package="auv_avalon/orogen/avalonControl" />
 </package>
