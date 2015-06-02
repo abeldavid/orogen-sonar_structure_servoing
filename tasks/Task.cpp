@@ -3,6 +3,7 @@
 #include "Task.hpp"
 #include <base/samples/Pointcloud.hpp>
 #include <sonar_detectors/SonarDetectorMath.hpp>
+#include <base/commands/AUVPosition.hpp>
 
 using namespace sonar_structure_servoing;
 
@@ -146,7 +147,7 @@ void Task::updateHook()
     if(!odometry_time.isNull())
     {
 	// create relative position command
-	base::AUVPositionCommand positionCommand;
+	base::commands::AUVPosition positionCommand;
 	positionCommand.x = std::abs(relative_target_position.x()) < 0.001 ? 0.0 : relative_target_position.x();
 	positionCommand.y = std::abs(relative_target_position.y()) < 0.001 ? 0.0 : relative_target_position.y();
 	positionCommand.z = _fixed_depth.get();
